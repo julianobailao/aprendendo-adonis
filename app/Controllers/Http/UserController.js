@@ -1,31 +1,30 @@
 'use strict'
 
 const User = use('App/Models/User')
+const UserService = use('App/Services/UserService')
+const Controller = use('App/Core/Controller')
 
-class UserController {
-  async index ({ request }) {
-    const page = request.get().page || 1
-
-    return await User.query().paginate(page)
+class UserController extends Controller {
+  async index ({ request, response }) {
+    return response.json(await this.service().paginate(request))
   }
 
-  async create () {
+  async store ({ request, response }) {
+    return response.status(201).json(await this.service().create(request.body))
   }
 
-  async store () {
+  async show ({ request, response }) {
+    return response.json(await this.service().find(request.params.id))
   }
 
-  async show ({ request }) {
-    return await User.findOrFail(request.params.id)
+  async update ({ request, response }) {
+    return response.json(await this.service().update(request.params.id, request.body))
   }
 
-  async edit () {
-  }
+  async destroy ({ request, response }) {
+    await this.service().delete(request.params.id)
 
-  async update () {
-  }
-
-  async delete () {
+    return response.status(204).json(null)
   }
 }
 
